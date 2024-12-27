@@ -1,7 +1,4 @@
 package com.akulov.hospital.adapters;
-
-import com.akulov.hospital.configuration.DatabaseConfiguration;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

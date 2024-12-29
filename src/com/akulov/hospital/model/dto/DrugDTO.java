@@ -1,12 +1,30 @@
 package com.akulov.hospital.model.dto;
+import com.akulov.hospital.annotations.TableField;
+import com.akulov.hospital.annotations.TableName;
 
-public class DrugDTO {
+import java.util.HashMap;
+import java.util.Map;
+
+@TableName(tableName = "drugs")
+public class DrugDTO extends DTO{
+
+    @TableField(collumnName = "id")
     private final Integer id;
+
+    @TableField(collumnName = "name")
     private final String name;
+
+    @TableField(collumnName = "realise_form")
     private final String realiseForm;
+
+    @TableField(collumnName = "dose")
     private final String dose;
+
+    @TableField(collumnName = "supplier")
     private final String supplier;
-    private final int expiration_date;
+
+    @TableField(collumnName = "expiration_date")
+    private final int expirationDate;
 
     public DrugDTO(Integer id, String name, String realiseForm, String dose, String supplier, int expiration_date){
         this.id = id;
@@ -14,7 +32,7 @@ public class DrugDTO {
         this.realiseForm = realiseForm;
         this.dose = dose;
         this.supplier = supplier;
-        this.expiration_date = expiration_date;
+        this.expirationDate = expiration_date;
     }
 
 
@@ -38,7 +56,9 @@ public class DrugDTO {
         return supplier;
     }
 
-    public int getExpiration_date() {
-        return expiration_date;
+    public int getExpirationDate() {
+        return expirationDate;
     }
+
+
 }

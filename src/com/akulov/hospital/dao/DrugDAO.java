@@ -1,35 +1,38 @@
 package com.akulov.hospital.dao;
 
 import com.akulov.hospital.adapters.DatabaseAdapter;
+
 import com.akulov.hospital.model.dto.DrugDTO;
+import com.akulov.hospital.utils.TableElemAnnotationParser;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DrugDAO extends DataAccessObjectImpl<DrugDTO> {
 
-    private final static String TABLENAME = "drugs";
+
     public DrugDAO(DatabaseAdapter adapter) {
         super(adapter);
     }
 
     @Override
     String getTableName(){
-        return TABLENAME;
+        return TableElemAnnotationParser.getTableName(DrugDTO.class);
     }
 
     @Override
     DrugDTO mapResultSetToEntity(ResultSet rs)throws SQLException {
-
         return new DrugDTO(
                 rs.getInt("id"),
                 rs.getString("name"),
-                rs.getString("realise_form"),
+                rs.getString("realiseForm"),
                 rs.getString("dose"),
                 rs.getString("supplier"),
-                rs.getInt("expiration_date")
+                rs.getInt("expirationDate")
             );
-
     }
+
+
 
 
 //    public DrugDTO get(){

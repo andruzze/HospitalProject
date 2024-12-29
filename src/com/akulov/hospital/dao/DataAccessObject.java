@@ -8,11 +8,12 @@ import java.util.Optional;
 
 
 public interface DataAccessObject<T> {
+
     Collection<T> get(String gettingField, Map<String, Object> fieldValueParams) throws SQLException;
 
-    void insert(T t);
+    void insert(T t) ;
 
-    void update(T t, String... args);
+    void update(T t, Map<String, Object> conditions);
 
-    void delete(T t);
+    void delete(String... args);
 }

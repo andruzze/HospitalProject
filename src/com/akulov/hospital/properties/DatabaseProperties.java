@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class DatabaseProperties {
+
     private final Properties properties;
 
     public DatabaseProperties(String filePath) {

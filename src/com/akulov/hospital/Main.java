@@ -1,14 +1,15 @@
 package com.akulov.hospital;
 
+import com.akulov.hospital.adapters.DatabaseAdapter;
 import com.akulov.hospital.adapters.DatabaseAdapterImpl;
 import com.akulov.hospital.configuration.DatabaseConfiguration;
-import com.akulov.hospital.dao.DrugDAO;
-import com.akulov.hospital.dao.SqlBuilder;
-import com.akulov.hospital.model.dto.DTO;
+import com.akulov.hospital.dao.EmployeeDAO;
+import com.akulov.hospital.model.dto.DepartmentDTO;
 import com.akulov.hospital.model.dto.DrugDTO;
+import com.akulov.hospital.model.dto.EmployeeDTO;
 import com.akulov.hospital.properties.DatabaseProperties;
+import com.akulov.hospital.util.ParserDTO;
 
-import java.sql.SQLException;
 import java.util.*;
 
 public class Main {
@@ -19,35 +20,28 @@ public class Main {
         DatabaseProperties dbProps = new DatabaseProperties(DBPATH);
         DatabaseConfiguration dbConf = new DatabaseConfiguration(dbProps);
         DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(dbConf.getConnection());
-        DrugDTO dragDTO = new DrugDTO(1, "Paracetomol", "tablets", "40mg", "Clinic", 10);
+        testQuery(adapter);
+//        testParser();
 
-        DrugDAO drugDAO = new DrugDAO(adapter);
-        Map<String, Object> values = new HashMap<>();
-        values.put("id", 2);
+    }
+    private static void testParser(){
+        ParserDTO parserDTO = new ParserDTO();
+        DepartmentDTO departmentDTO = new DepartmentDTO(1, "Cardiologi", "89527086706", 0);
+        DrugDTO drugDTO = new DrugDTO(1, "somename", "somerealise", "50mg", "supp", 20);
+        System.out.println(departmentDTO.getFieldsValeus());
+    }
 
-        try{
-            Collection<DrugDTO> res = drugDAO.get("*",values);
-
-            if(res.isEmpty()){
-                System.out.println(1);
-            }
-            for(DrugDTO r:res){
-
-                System.out.println(r.getName());
-            }
-        }catch (SQLException e){
-            System.out.println(e.getMessage());
-        }
+    private static void testQuery(DatabaseAdapter adapter){
 
 
-
-
-
-
-
-
-
-
-
+        EmployeeDAO employeeDAO = new EmployeeDAO(adapter);
+        Collection<EmployeeDTO> res =  employeeDAO.get("*", new HashMap<>());
+        res.forEach(System.out::println);
+//        try{
+//
+//
+//        }catch (SQLException e){
+//            System.out.println(e.getMessage());
+//        }
     }
 }

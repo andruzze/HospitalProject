@@ -3,7 +3,7 @@ import com.akulov.hospital.annotations.TableField;
 import com.akulov.hospital.annotations.TableName;
 
 @TableName(tableName = "drugs")
-public class DrugDTO extends DTO{
+public class DrugDTO extends DTOImpl {
 
     @TableField(collumnName = "id")
     private final Integer id;

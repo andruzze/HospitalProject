@@ -1,12 +1,12 @@
 package com.akulov.hospital.dao;
 
 import com.akulov.hospital.adapters.DatabaseAdapter;
-import com.akulov.hospital.model.dto.MapperDTO;
+import com.akulov.hospital.model.dto.DTO;
 import com.akulov.hospital.util.ParserDTO;
 import java.sql.*;
 import java.util.*;
 
-public abstract class DataAccessObjectImpl<T extends MapperDTO> implements DataAccessObject<T> {
+public abstract class DataAccessObjectImpl<T extends DTO> implements DataAccessObject<T> {
 
     private final DatabaseAdapter adapter;
     protected final ParserDTO parser = new ParserDTO();
@@ -19,7 +19,7 @@ public abstract class DataAccessObjectImpl<T extends MapperDTO> implements DataA
     abstract T mapResultSetToEntity(ResultSet rs) throws SQLException;
 
     @Override
-    public Collection<T> get(String gettingField, Map<String, Object> fieldValueParams) throws SQLException {
+    public Collection<T> get(String gettingField, Map<String, Object> fieldValueParams) {
         List<T> entityArr = new ArrayList<T>();
         StringBuilder queryBuilder = new StringBuilder()
                 .append("SELECT ")
@@ -29,10 +29,13 @@ public abstract class DataAccessObjectImpl<T extends MapperDTO> implements DataA
                 .append(" WHERE ");
         fieldValueParams.forEach((key, value) -> queryBuilder.append(key).append(" = ? AND "));
         String query = queryBuilder.substring(0, queryBuilder.length() - 5);
-        ResultSet rows = adapter.executeQuery(query, fieldValueParams.values().toArray());
-        System.out.println(query);
-        while(rows.next()){
-            entityArr.add(mapResultSetToEntity(rows));
+        try {
+            ResultSet rows = adapter.executeQuery(query, fieldValueParams.values().toArray());
+            while(rows.next()){
+                entityArr.add(mapResultSetToEntity(rows));
+            }
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
         }
         return entityArr;
     }
@@ -98,6 +101,5 @@ public abstract class DataAccessObjectImpl<T extends MapperDTO> implements DataA
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }
-
     }
 }

@@ -29,6 +29,19 @@ public class ParserDTO {
         return resMapping;
     }
 
+    public Map<String, Object> getFieldsType(Class<?> clazz){
+        Map<String, Object> mapFieldsType = new HashMap<String, Object>();
+        Field[] fields = clazz.getDeclaredFields();
+        for(Field field:fields){
+            if (field.isAnnotationPresent(TableField.class)){
+                Class<? > type = field.getType();
+                String colVal = field.getAnnotation(TableField.class).collumnName();
+                mapFieldsType.put(colVal, type);
+            }
+        }
+        return mapFieldsType;
+    }
+
     public Collection<String> parseFields(Class<?> clazz){
         List<String> resList = new ArrayList<>();
         Field[] classFields = clazz.getDeclaredFields();

@@ -1,7 +1,8 @@
-package com.akulov.hospital.model.dto;
+package com.akulov.hospital.model.dto.entity;
 
 import com.akulov.hospital.annotations.TableField;
 import com.akulov.hospital.annotations.TableName;
+import com.akulov.hospital.model.dto.DTOImpl;
 
 @TableName(tableName = "departments")
 public class DepartmentDTO extends DTOImpl {

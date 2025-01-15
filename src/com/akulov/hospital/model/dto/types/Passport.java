@@ -19,10 +19,10 @@ public class Passport {
 
     @Override
     public String toString() {
-        return "Passport{" +
+        return "(" +
                 serial +
                 "," +
                 number +
-                "}";
+                ")";
     }
 }

@@ -1,10 +1,11 @@
-package com.akulov.hospital.model.dto;
+package com.akulov.hospital.model.dto.entity;
 
 import com.akulov.hospital.annotations.TableField;
 import com.akulov.hospital.annotations.TableName;
+import com.akulov.hospital.model.dto.DTOImpl;
 
 @TableName(tableName = "stores")
-public class StoreDTO extends DTOImpl{
+public class StoreDTO extends DTOImpl {
 
     @TableField(collumnName = "id")
     private final Integer id;

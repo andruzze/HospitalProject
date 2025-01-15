@@ -1,9 +1,8 @@
 package com.akulov.hospital.adapters;
+import com.akulov.hospital.model.dto.types.FullName;
+import com.akulov.hospital.model.dto.types.Passport;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DatabaseAdapterImpl implements DatabaseAdapter {
 

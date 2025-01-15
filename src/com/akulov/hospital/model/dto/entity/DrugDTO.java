@@ -1,6 +1,9 @@
-package com.akulov.hospital.model.dto;
+package com.akulov.hospital.model.dto.entity;
 import com.akulov.hospital.annotations.TableField;
 import com.akulov.hospital.annotations.TableName;
+import com.akulov.hospital.model.dto.DTOImpl;
+
+import java.time.LocalDate;
 
 @TableName(tableName = "drugs")
 public class DrugDTO extends DTOImpl {
@@ -21,9 +24,9 @@ public class DrugDTO extends DTOImpl {
     private final String supplier;
 
     @TableField(collumnName = "expiration_date")
-    private final Integer expirationDate;
+    private final LocalDate expirationDate;
 
-    public DrugDTO(Integer id, String name, String realiseForm, String dose, String supplier, Integer expiration_date){
+    public DrugDTO(Integer id, String name, String realiseForm, String dose, String supplier, LocalDate expiration_date){
         this.id = id;
         this.name = name;
         this.realiseForm = realiseForm;
@@ -52,7 +55,7 @@ public class DrugDTO extends DTOImpl {
         return supplier;
     }
 
-    public Integer getExpirationDate() {
+    public LocalDate getExpirationDate() {
         return expirationDate;
     }
 

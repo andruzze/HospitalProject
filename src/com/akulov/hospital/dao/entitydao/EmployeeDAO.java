@@ -1,7 +1,8 @@
-package com.akulov.hospital.dao;
+package com.akulov.hospital.dao.entitydao;
 
 import com.akulov.hospital.adapters.DatabaseAdapter;
-import com.akulov.hospital.model.dto.EmployeeDTO;
+import com.akulov.hospital.dao.DataAccessObjectImpl;
+import com.akulov.hospital.model.dto.entity.EmployeeDTO;
 import com.akulov.hospital.model.dto.types.FullName;
 import com.akulov.hospital.model.dto.types.Passport;
 
@@ -15,12 +16,12 @@ public class EmployeeDAO extends DataAccessObjectImpl<EmployeeDTO> {
     }
 
     @Override
-    String getTableName() {
+    public String getTableName() {
         return parser.getTableName(EmployeeDTO.class);
     }
 
     @Override
-    EmployeeDTO mapResultSetToEntity(ResultSet rs) throws SQLException {
+    public EmployeeDTO mapResultSetToEntity(ResultSet rs) throws SQLException {
         String fio = rs.getString("fio");
         String[] Name = fio.substring(1, fio.length()-1).split(",");
         String passport = rs.getString("passport");

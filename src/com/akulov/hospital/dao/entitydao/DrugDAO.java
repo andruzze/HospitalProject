@@ -1,9 +1,9 @@
-package com.akulov.hospital.dao;
+package com.akulov.hospital.dao.entitydao;
 
 import com.akulov.hospital.adapters.DatabaseAdapter;
 
-import com.akulov.hospital.model.dto.DrugDTO;
-
+import com.akulov.hospital.dao.DataAccessObjectImpl;
+import com.akulov.hospital.model.dto.entity.DrugDTO;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -19,14 +19,14 @@ public class DrugDAO extends DataAccessObjectImpl<DrugDTO> {
     }
 
     @Override
-    DrugDTO mapResultSetToEntity(ResultSet rs) throws SQLException {
+    public DrugDTO mapResultSetToEntity(ResultSet rs) throws SQLException {
         return new DrugDTO(
                 rs.getInt("id"),
                 rs.getString("name"),
                 rs.getString("realise_form"),
                 rs.getString("dose"),
                 rs.getString("supplier"),
-                rs.getInt("expiration_date")
+                rs.getDate("expiration_date").toLocalDate()
 
             );
     }

@@ -2,6 +2,9 @@ package com.akulov.hospital.dao;
 
 import com.akulov.hospital.adapters.DatabaseAdapter;
 import com.akulov.hospital.model.dto.DTO;
+import com.akulov.hospital.model.dto.entity.EmployeeDTO;
+import com.akulov.hospital.model.dto.types.FullName;
+import com.akulov.hospital.model.dto.types.Passport;
 import com.akulov.hospital.util.ParserDTO;
 import java.sql.*;
 import java.util.*;
@@ -15,8 +18,9 @@ public abstract class DataAccessObjectImpl<T extends DTO> implements DataAccessO
         this.adapter = adapter;
     }
 
-    abstract String getTableName();
-    abstract T mapResultSetToEntity(ResultSet rs) throws SQLException;
+    public abstract String getTableName();
+
+    public abstract T mapResultSetToEntity(ResultSet rs) throws SQLException;
 
     @Override
     public Collection<T> get(String gettingField, Map<String, Object> fieldValueParams) {
@@ -53,14 +57,25 @@ public abstract class DataAccessObjectImpl<T extends DTO> implements DataAccessO
             query.append(field).append(",");
         }
         query.setLength(query.length()-1);
-        query.append(") VALUES(")
-            .append("?,".repeat(vals.length));
+        query.append(") VALUES(");
+        for(int i = 0; i < vals.length; i++){
+            if (vals[i].getClass().equals(FullName.class)){
+                query.append("(?::full_name),");
+                vals[i] = vals[i].toString();
+            } else if (vals[i].getClass().equals(Passport.class)) {
+                query.append("(?::passport),");
+                vals[i] = vals[i].toString();
+            } else{
+                query.append("?,");
+            };
+        }
         query.setLength(query.length()-1);
         query.append(")");
         try {
             adapter.executeUpdate(query.toString(), vals);
         }catch (SQLException e){
             System.out.println("Ошибка вставки строки в таблицу.\nQUERY - " + query.toString() + "\nVALUES - ");
+
             for(Object val:vals){
                 System.out.print(val + ",");
             }
@@ -71,31 +86,48 @@ public abstract class DataAccessObjectImpl<T extends DTO> implements DataAccessO
     @Override
     public void update(T dtoObj, Map<String, Object> conditions) {
         Map<String, Object> fieldMap = dtoObj.getFieldsValeus();
-        Collection<Object> vals = fieldMap.values();
-        Set<String> fields = fieldMap.keySet();
+        Collection<Object> args = new ArrayList<>();
+
         StringBuilder query = new StringBuilder()
                 .append("UPDATE ")
                 .append(getTableName())
                 .append(" SET ");
-        fieldMap.forEach((key, value) -> query.append(key).append("=").append(value).append(","));
+        for (Map.Entry<String, Object> entry : fieldMap.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            query.append(key).append("=");
+            if(value.getClass().equals(FullName.class)){
+                query.append("(?::full_name)").append(",");
+                args.add(value.toString());
+            } else if (value.getClass().equals(Passport.class)) {
+                query.append("(?::passport)").append(",");
+                args.add(value.toString());
+            }else{
+                query.append("?").append(",");
+                args.add(value);
+            }
+        }
+        args.addAll(conditions.values());
         query.setLength(query.length()-1);
         query.append(" WHERE ");
-        conditions.forEach((key, value) -> query.append(key).append("=").append(value).append(" AND "));
+        conditions.forEach((key, value) -> query.append(key).append("=").append("?").append(" AND "));
         query.setLength(query.length()-5);
-        System.out.println(query.toString());
         try {
-            adapter.executeUpdate(query.toString());
+            adapter.executeUpdate(query.toString(), args.toArray());
         }catch (SQLException e){
+            System.out.println(query);
+            args.forEach(val -> System.out.println(val));
             System.out.println(e.getMessage());
+            e.printStackTrace();
         }
-
-
-
     }
 
     @Override
     public void delete(String... args) {
-        StringBuilder query = new StringBuilder().append("DELETE FROM ").append(getTableName()).append(" WHERE ").append("id = ").append("?");
+        StringBuilder query = new StringBuilder().append("DELETE FROM ").append(getTableName());
+        if(args.length > 0){
+            query.append(" WHERE ").append("id=").append("?");
+        }
         try{
             adapter.executeUpdate(query.toString(), args);
         }catch (SQLException e){

@@ -25,11 +25,16 @@ public class FullName {
 
     @Override
     public String toString() {
-        return "Fio{" +
-                "lastName='" + lastName + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", middleName='" + middleName + '\'' +
-                '}';
+        return String.format("('%s','%s','%s')",
+                lastName.replace("'", "''"),
+                firstName.replace("'", "''"),
+                middleName.replace("'", "''"));
+    }
+    public String toPostgresString() {
+        return String.format("('%s','%s','%s')",
+                lastName.replace("'", "''"),
+                firstName.replace("'", "''"),
+                middleName.replace("'", "''"));
     }
 
 

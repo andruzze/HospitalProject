@@ -13,7 +13,7 @@ public class StoreDTO extends DTOImpl {
     @TableField(collumnName = "department_id")
     private final Integer departmentId;
 
-    @TableField(collumnName = "adminostrator_id")
+    @TableField(collumnName = "administrator_id")
     private final Integer adminostratorId;
 
     @TableField(collumnName = "capacity")

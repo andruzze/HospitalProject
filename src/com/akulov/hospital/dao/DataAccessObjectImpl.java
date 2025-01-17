@@ -2,7 +2,6 @@ package com.akulov.hospital.dao;
 
 import com.akulov.hospital.adapters.DatabaseAdapter;
 import com.akulov.hospital.model.dto.DTO;
-import com.akulov.hospital.model.dto.entity.EmployeeDTO;
 import com.akulov.hospital.model.dto.types.FullName;
 import com.akulov.hospital.model.dto.types.Passport;
 import com.akulov.hospital.util.ParserDTO;
@@ -29,10 +28,13 @@ public abstract class DataAccessObjectImpl<T extends DTO> implements DataAccessO
                 .append("SELECT ")
                 .append(gettingField)
                 .append(" FROM ")
-                .append(getTableName())
-                .append(" WHERE ");
-        fieldValueParams.forEach((key, value) -> queryBuilder.append(key).append(" = ? AND "));
-        String query = queryBuilder.substring(0, queryBuilder.length() - 5);
+                .append(getTableName());
+        String query = queryBuilder.toString();
+        if(!fieldValueParams.isEmpty()) {
+            queryBuilder.append(" WHERE ");
+            fieldValueParams.forEach((key, value) -> queryBuilder.append(key).append(" = ? AND "));
+            query = queryBuilder.substring(0, queryBuilder.length() - 5);
+        }
         try {
             ResultSet rows = adapter.executeQuery(query, fieldValueParams.values().toArray());
             while(rows.next()){
@@ -54,11 +56,13 @@ public abstract class DataAccessObjectImpl<T extends DTO> implements DataAccessO
                 .append(getTableName())
                 .append(" (");
         for(String field:fields){
-            query.append(field).append(",");
+            if(!Objects.equals(field, "id")){
+                query.append(field).append(",");
+            }
         }
         query.setLength(query.length()-1);
         query.append(") VALUES(");
-        for(int i = 0; i < vals.length; i++){
+        for(int i = 1; i < vals.length; i++){
             if (vals[i].getClass().equals(FullName.class)){
                 query.append("(?::full_name),");
                 vals[i] = vals[i].toString();
@@ -72,7 +76,7 @@ public abstract class DataAccessObjectImpl<T extends DTO> implements DataAccessO
         query.setLength(query.length()-1);
         query.append(")");
         try {
-            adapter.executeUpdate(query.toString(), vals);
+            adapter.executeUpdate(query.toString(), Arrays.copyOfRange(vals, 1, vals.length));
         }catch (SQLException e){
             System.out.println("Ошибка вставки строки в таблицу.\nQUERY - " + query.toString() + "\nVALUES - ");
 
@@ -123,7 +127,7 @@ public abstract class DataAccessObjectImpl<T extends DTO> implements DataAccessO
     }
 
     @Override
-    public void delete(String... args) {
+    public void delete(Integer... args) {
         StringBuilder query = new StringBuilder().append("DELETE FROM ").append(getTableName());
         if(args.length > 0){
             query.append(" WHERE ").append("id=").append("?");
@@ -131,7 +135,9 @@ public abstract class DataAccessObjectImpl<T extends DTO> implements DataAccessO
         try{
             adapter.executeUpdate(query.toString(), args);
         }catch (SQLException e){
+            System.out.println(query);
             System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 }

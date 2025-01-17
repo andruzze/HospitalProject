@@ -23,16 +23,20 @@ public class DrugDTO extends DTOImpl {
     @TableField(collumnName = "supplier")
     private final String supplier;
 
-    @TableField(collumnName = "expiration_date")
-    private final LocalDate expirationDate;
+    @TableField(collumnName = "shelf_life")
+    private final Integer shelfLife;
 
-    public DrugDTO(Integer id, String name, String realiseForm, String dose, String supplier, LocalDate expiration_date){
+    @TableField(collumnName = "description")
+    private final String description;
+
+    public DrugDTO(Integer id, String name, String realiseForm, String dose, String supplier, Integer shelfLife, String description){
         this.id = id;
         this.name = name;
         this.realiseForm = realiseForm;
         this.dose = dose;
         this.supplier = supplier;
-        this.expirationDate = expiration_date;
+        this.shelfLife = shelfLife;
+        this.description = description;
     }
 
     public Integer getId() {
@@ -55,9 +59,11 @@ public class DrugDTO extends DTOImpl {
         return supplier;
     }
 
-    public LocalDate getExpirationDate() {
-        return expirationDate;
+    public Integer getShelfLife() {
+        return shelfLife;
     }
 
-
+    public String getDescription() {
+        return description;
+    }
 }

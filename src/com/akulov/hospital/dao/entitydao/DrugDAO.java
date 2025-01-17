@@ -26,8 +26,8 @@ public class DrugDAO extends DataAccessObjectImpl<DrugDTO> {
                 rs.getString("realise_form"),
                 rs.getString("dose"),
                 rs.getString("supplier"),
-                rs.getDate("expiration_date").toLocalDate()
-
+                rs.getInt("shelf_life"),
+                rs.getString("description")
             );
     }
 }

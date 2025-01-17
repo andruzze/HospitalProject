@@ -1,9 +1,13 @@
 package com.akulov.hospital;
 
-import com.akulov.hospital.adapters.DatabaseAdapter;
 import com.akulov.hospital.adapters.DatabaseAdapterImpl;
 import com.akulov.hospital.configuration.DatabaseConfiguration;
+import com.akulov.hospital.controller.ControllerImpl;
+import com.akulov.hospital.dao.entitydao.DrugDAO;
+import com.akulov.hospital.model.Model;
+import com.akulov.hospital.model.ModelImpl;
 import com.akulov.hospital.properties.DatabaseProperties;
+import com.akulov.hospital.view.ViewImpl;
 
 public class Main {
     private final static String DBPATH = "src/com/akulov/hospital/application.properties";
@@ -13,17 +17,11 @@ public class Main {
         DatabaseProperties dbProps = new DatabaseProperties(DBPATH);
         DatabaseConfiguration dbConf = new DatabaseConfiguration(dbProps);
         DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(dbConf.getConnection());
-        testQuery(adapter);
-//        testParser();
 
-    }
-//    private static void testParser(){
-//        ParserDTO parserDTO = new ParserDTO();
-//        DepartmentDTO departmentDTO = new DepartmentDTO(1, "Cardiologi", "89527086706", 0);
-//        DrugDTO drugDTO = new DrugDTO(1, "somename", "somerealise", "50mg", "supp", 20);
-//        System.out.println(departmentDTO.getFieldsValeus());
-//    }
+        Model model = new ModelImpl();
+        DrugDAO drugDAO = new DrugDAO(adapter);
+        ControllerImpl controller = new ControllerImpl(model, drugDAO);
+        new ViewImpl(controller);
 
-    private static void testQuery(DatabaseAdapter adapter){
     }
 }

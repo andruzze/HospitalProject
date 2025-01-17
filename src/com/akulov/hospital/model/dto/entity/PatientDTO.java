@@ -11,7 +11,7 @@ public class PatientDTO extends DTOImpl {
     @TableField(collumnName = "id")
     private final Integer id;
 
-    @TableField(collumnName = "full_name")
+    @TableField(collumnName = "fio")
     private final FullName fullName;
 
     @TableField(collumnName = "age")

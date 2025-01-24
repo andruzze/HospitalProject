@@ -3,8 +3,6 @@ import com.akulov.hospital.annotations.TableField;
 import com.akulov.hospital.annotations.TableName;
 import com.akulov.hospital.model.dto.DTOImpl;
 
-import java.time.LocalDate;
-
 @TableName(tableName = "drugs")
 public class DrugDTO extends DTOImpl {
 
@@ -47,7 +45,7 @@ public class DrugDTO extends DTOImpl {
         return name;
     }
 
-    public String getRealiseForm() {
+    public String getReleaseForm() {
         return realiseForm;
     }
 

@@ -1,175 +1,160 @@
 package com.akulov.hospital.view;
 
+import com.akulov.hospital.controller.Controller;
 import com.akulov.hospital.controller.ControllerImpl;
-import com.akulov.hospital.model.dto.entity.DrugDTO;
-
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.Collection;
+import java.util.Map;
 
-public class ViewImpl {
-    private final ControllerImpl controller;
+
+public class ViewImpl implements View {
+    private final Controller controller;
     private JFrame frame;
-    private JTable table;
-    private DefaultTableModel tableModel;
+    private JPanel mainPanel; // Главная панель с CardLayout
+    private CardLayout cardLayout;
+    private DrugPage drugsPage;
+    private StoresPage storesPage;
+    private TransactionPage transactionsPage;
+    private InventoryPage inventoryPage;
+    private DispensingPage dispensingPage;
 
-    public ViewImpl(ControllerImpl controller) {
+    public ViewImpl(Controller controller) {
         this.controller = controller;
-        initializeUI();
     }
 
-    /**
-     * Инициализация UI.
-     */
-    private void initializeUI() {
-        frame = new JFrame("Список препаратов");
+    @Override
+    public void start() {
+        // Окно авторизации
+        if (!showLoginDialog()) {
+            return; // Если авторизация не пройдена, программа не запускается
+        }
+
+        frame = new JFrame("Управление госпиталем");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
-        frame.setLayout(new BorderLayout());
 
-        // Создаем таблицу
-        String[] columnNames = {"ID", "Name", "Realise Form", "Dose", "Supplier", "Shelf Life", "Description"};
-        tableModel = new DefaultTableModel(columnNames, 0);
-        table = new JTable(tableModel);
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
 
-        // Загружаем данные в таблицу
-        loadTableData();
+        drugsPage = new DrugPage(controller);
+        storesPage = new StoresPage(controller);
+        transactionsPage = new TransactionPage(controller);
+        inventoryPage = new InventoryPage(controller);
+        dispensingPage = new DispensingPage(controller);
 
-        // Панель с кнопками
-        JPanel buttonPanel = new JPanel();
-        JButton addButton = new JButton("Добавить препарат");
-        JButton updateButton = new JButton("Обновить препарат");
-        JButton deleteButton = new JButton("Удалить препарат");
+        mainPanel.add(transactionsPage.getPanel(), "TransactionsPage");
+        mainPanel.add(drugsPage.getPanel(), "DrugsPage");
+        mainPanel.add(storesPage.getPanel(), "StoresPage");
+        mainPanel.add(inventoryPage.getPanel(), "InventoryPage");
+        mainPanel.add(dispensingPage.getPanel(), "DispensingPage");
 
-        // Добавление слушателей
-        addButton.addActionListener(e -> showAddDrugDialog());
-        updateButton.addActionListener(e -> showUpdateDrugDialog());
-        deleteButton.addActionListener(e -> deleteSelectedDrug());
+        frame.setJMenuBar(createMenuBar());
 
-        buttonPanel.add(addButton);
-        buttonPanel.add(updateButton);
-        buttonPanel.add(deleteButton);
-
-        // Добавляем компоненты в окно
-        frame.add(new JScrollPane(table), BorderLayout.CENTER);
-        frame.add(buttonPanel, BorderLayout.SOUTH);
-
+        frame.add(mainPanel);
         frame.setVisible(true);
     }
 
     /**
-     * Загружает данные в таблицу.
+     * Создает меню с навигацией и пунктом выхода.
      */
-    private void loadTableData() {
-        Collection<DrugDTO> drugs = controller.getAllDrugs();
-        tableModel.setRowCount(0); // Очистка таблицы
-        for (DrugDTO drug : drugs) {
-            tableModel.addRow(new Object[]{
-                    drug.getId(),
-                    drug.getName(),
-                    drug.getRealiseForm(),
-                    drug.getDose(),
-                    drug.getSupplier(),
-                    drug.getShelfLife(),
-                    drug.getDescription()
-            });
-        }
+    private JMenuBar createMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu navigationMenu = new JMenu("Навигация");
+
+        JMenuItem drugsPageItem = new JMenuItem("Препараты");
+        JMenuItem storesPageItem = new JMenuItem("Склады");
+        JMenuItem transactionsPageItem = new JMenuItem("Журнал транзакций");
+        JMenuItem inventoryPageItem = new JMenuItem("Инвентаризация");
+        JMenuItem dispensingPageItem = new JMenuItem("Выдача препаратов");
+        JMenuItem logoutItem = new JMenuItem("Выход");
+
+        drugsPageItem.addActionListener(e ->{
+                cardLayout.show(mainPanel, "DrugsPage");
+                storesPage.updateData();});
+        storesPageItem.addActionListener(e -> cardLayout.show(mainPanel, "StoresPage"));
+        transactionsPageItem.addActionListener(e -> {
+            transactionsPage.updateData(); // Обновляем данные перед отображением
+            cardLayout.show(mainPanel, "TransactionsPage");
+        });
+        inventoryPageItem.addActionListener(e -> cardLayout.show(mainPanel, "InventoryPage"));
+        dispensingPageItem.addActionListener(e->cardLayout.show(mainPanel, "DispensingPage"));
+        logoutItem.addActionListener(e -> System.exit(0)); // Завершает приложение
+
+        navigationMenu.add(drugsPageItem);
+        navigationMenu.add(storesPageItem);
+        navigationMenu.add(transactionsPageItem);
+        navigationMenu.add(inventoryPageItem);
+        navigationMenu.add(dispensingPageItem);
+        navigationMenu.addSeparator(); // Разделитель
+        navigationMenu.add(logoutItem);
+
+        menuBar.add(navigationMenu);
+        return menuBar;
     }
 
     /**
-     * Показывает диалоговое окно для добавления нового препарата.
+     * Отображает диалоговое окно авторизации.
+     * @return true, если авторизация успешна, иначе false.
      */
-    private void showAddDrugDialog() {
-        JTextField nameField = new JTextField();
-        JTextField realiseFormField = new JTextField();
-        JTextField doseField = new JTextField();
-        JTextField supplierField = new JTextField();
-        JTextField shelfLifeField = new JTextField();
-        JTextField descriptionField = new JTextField();
+    private boolean showLoginDialog() {
+        // Диалоговое окно авторизации
+        JDialog loginDialog = new JDialog((Frame) null, "Авторизация", true);
+        loginDialog.setLayout(new GridBagLayout());
+        loginDialog.setSize(300, 200);
+        loginDialog.setLocationRelativeTo(null);
 
-        Object[] fields = {
-                "Name:", nameField,
-                "Realise Form:", realiseFormField,
-                "Dose:", doseField,
-                "Supplier:", supplierField,
-                "Shelf Life:", shelfLifeField,
-                "Description:", descriptionField
-        };
+        // Поля для ввода логина и пароля
+        JTextField usernameField = new JTextField(15);
+        JPasswordField passwordField = new JPasswordField(15);
+        JButton loginButton = new JButton("Войти");
+        JButton cancelButton = new JButton("Отмена");
 
-        int result = JOptionPane.showConfirmDialog(frame, fields, "Добавить препарат", JOptionPane.OK_CANCEL_OPTION);
+        // Разметка
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 10, 5, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        if (result == JOptionPane.OK_OPTION) {
-            DrugDTO newDrug = new DrugDTO(
-                    null,
-                    nameField.getText(),
-                    realiseFormField.getText(),
-                    doseField.getText(),
-                    supplierField.getText(),
-                    Integer.parseInt(shelfLifeField.getText()),
-                    descriptionField.getText()
-            );
-            controller.addDrug(newDrug);
-            loadTableData();
-        }
-    }
+        gbc.gridx = 0; gbc.gridy = 0;
+        loginDialog.add(new JLabel("Логин:"), gbc);
 
-    /**
-     * Показывает диалоговое окно для обновления препарата.
-     */
-    private void showUpdateDrugDialog() {
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(frame, "Выберите препарат для обновления.");
-            return;
-        }
+        gbc.gridx = 1; gbc.gridy = 0;
+        loginDialog.add(usernameField, gbc);
 
-        Integer id = (Integer) tableModel.getValueAt(selectedRow, 0);
-        JTextField nameField = new JTextField((String) tableModel.getValueAt(selectedRow, 1));
-        JTextField realiseFormField = new JTextField((String) tableModel.getValueAt(selectedRow, 2));
-        JTextField doseField = new JTextField((String) tableModel.getValueAt(selectedRow, 3));
-        JTextField supplierField = new JTextField((String) tableModel.getValueAt(selectedRow, 4));
-        JTextField shelfLifeField = new JTextField(tableModel.getValueAt(selectedRow, 5).toString());
-        JTextField descriptionField = new JTextField((String) tableModel.getValueAt(selectedRow, 6));
+        gbc.gridx = 0; gbc.gridy = 1;
+        loginDialog.add(new JLabel("Пароль:"), gbc);
 
-        Object[] fields = {
-                "Name:", nameField,
-                "Realise Form:", realiseFormField,
-                "Dose:", doseField,
-                "Supplier:", supplierField,
-                "Shelf Life:", shelfLifeField,
-                "Description:", descriptionField
-        };
+        gbc.gridx = 1; gbc.gridy = 1;
+        loginDialog.add(passwordField, gbc);
 
-        int result = JOptionPane.showConfirmDialog(frame, fields, "Обновить препарат", JOptionPane.OK_CANCEL_OPTION);
+        gbc.gridx = 0; gbc.gridy = 2;
+        loginDialog.add(loginButton, gbc);
 
-        if (result == JOptionPane.OK_OPTION) {
-            DrugDTO updatedDrug = new DrugDTO(
-                    id,
-                    nameField.getText(),
-                    realiseFormField.getText(),
-                    doseField.getText(),
-                    supplierField.getText(),
-                    Integer.parseInt(shelfLifeField.getText()),
-                    descriptionField.getText()
-            );
-            controller.updateDrug(updatedDrug, id);
-            loadTableData();
-        }
-    }
+        gbc.gridx = 1; gbc.gridy = 2;
+        loginDialog.add(cancelButton, gbc);
 
-    /**
-     * Удаляет выбранный препарат.
-     */
-    private void deleteSelectedDrug() {
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(frame, "Выберите препарат для удаления.");
-            return;
-        }
+        // Обработчики кнопок
+        final boolean[] isAuthenticated = {false};
 
-        Integer id = (Integer) tableModel.getValueAt(selectedRow, 0);
-        controller.deleteDrug(id);
-        loadTableData();
+        loginButton.addActionListener(e -> {
+            String login = usernameField.getText().trim();
+            String password = new String(passwordField.getPassword()).trim();
+            boolean auth = controller.authEmployee(login, password);
+
+            if (controller.authEmployee(login, password)) {
+                isAuthenticated[0] = true;
+                loginDialog.dispose(); // Закрыть диалог
+            } else {
+                JOptionPane.showMessageDialog(loginDialog, "Неверный логин или пароль!", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        cancelButton.addActionListener(e -> {
+            loginDialog.dispose(); // Закрыть диалог без авторизации
+        });
+
+        loginDialog.setVisible(true);
+        return isAuthenticated[0];
     }
 }
+
+

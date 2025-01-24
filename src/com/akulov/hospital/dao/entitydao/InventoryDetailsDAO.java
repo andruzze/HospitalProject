@@ -3,6 +3,7 @@ package com.akulov.hospital.dao.entitydao;
 import com.akulov.hospital.adapters.DatabaseAdapter;
 import com.akulov.hospital.dao.DataAccessObjectImpl;
 import com.akulov.hospital.model.dto.entity.InventoryDetailsDTO;
+import org.postgresql.util.PSQLException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,5 +27,9 @@ public class InventoryDetailsDAO extends DataAccessObjectImpl<InventoryDetailsDT
                 rs.getInt("drugs_count"),
                 rs.getInt("drugs_count_before")
         );
+    }
+
+    public void addDetails(Integer inventoryId, Integer storeId, Integer drugId, Integer drugsCount) throws PSQLException {
+        callProcedure("insert_inventory_details", inventoryId, storeId, drugId, drugsCount);
     }
 }

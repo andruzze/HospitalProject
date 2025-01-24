@@ -22,13 +22,19 @@ public class StoreDTO extends DTOImpl {
     @TableField(collumnName = "current_fill")
     private final Integer currentFill;
 
-    public StoreDTO(Integer id, Integer departmentId, Integer adminostratorId, Integer capacity, Integer currentFill) {
+    @TableField(collumnName = "cabinet_number")
+    private final int cabinetNumber;
+
+    public StoreDTO(Integer id, Integer departmentId, Integer adminostratorId, Integer capacity, Integer currentFill, int cabinetNumber) {
         this.id = id;
         this.departmentId = departmentId;
         this.adminostratorId = adminostratorId;
         this.capacity = capacity;
         this.currentFill = currentFill;
+        this.cabinetNumber = cabinetNumber;
     }
+
+    public int getCabinetNumber() {return cabinetNumber;}
 
     public Integer getCurrentFill() {
         return currentFill;

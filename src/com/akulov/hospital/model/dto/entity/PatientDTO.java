@@ -23,12 +23,16 @@ public class PatientDTO extends DTOImpl {
     @TableField(collumnName = "telephone")
     private final String telephone;
 
-    public PatientDTO(Integer id, FullName fullName, Integer age, Passport passport, String telephone) {
+    @TableField(collumnName = "policy")
+    private final String policy;
+
+    public PatientDTO(Integer id, FullName fullName, Integer age, Passport passport, String telephone, String policy) {
         this.id = id;
         this.fullName = fullName;
         this.age = age;
         this.passport = passport;
         this.telephone = telephone;
+        this.policy = policy;
     }
 
     public Integer getId() {
@@ -42,6 +46,8 @@ public class PatientDTO extends DTOImpl {
     public Integer getAge() {
         return age;
     }
+
+    public String getPolicy(){return policy;}
 
     public Passport getPassport() {
         return passport;

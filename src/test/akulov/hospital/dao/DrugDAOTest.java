@@ -39,7 +39,7 @@ public class DrugDAOTest {
         List<DrugDTO> drugs = new ArrayList<>(drugDAO.get("*", Map.of("name", "Paracetamol")));
 
         assertEquals("Paracetamol", drugs.get(0).getName());
-        assertEquals("Tablet", drugs.get(0).getRealiseForm());
+        assertEquals("Tablet", drugs.get(0).getReleaseForm());
         assertEquals("500mg", drugs.get(0).getDose());
         assertEquals("Supplier A", drugs.get(0).getSupplier());
         assertEquals(36, drugs.get(0).getShelfLife());
@@ -63,7 +63,7 @@ public class DrugDAOTest {
         // Assert
         List<DrugDTO> drugs = new ArrayList<>(drugDAO.get("*", Map.of("name", "Amoxicillin")));
         assertEquals(1, drugs.size());
-        assertEquals("Syrup", drugs.get(0).getRealiseForm());
+        assertEquals("Syrup", drugs.get(0).getReleaseForm());
         assertEquals("250mg/5ml", drugs.get(0).getDose());
         assertEquals("Supplier C", drugs.get(0).getSupplier());
     }
@@ -81,7 +81,7 @@ public class DrugDAOTest {
         assertFalse(drugs.isEmpty());
         DrugDTO drug = drugs.iterator().next();
         assertEquals("Ibuprofen", drug.getName());
-        assertEquals("Capsule", drug.getRealiseForm());
+        assertEquals("Capsule", drug.getReleaseForm());
     }
 
     @Test

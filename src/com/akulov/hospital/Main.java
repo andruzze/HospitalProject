@@ -7,6 +7,7 @@ import com.akulov.hospital.dao.entitydao.DrugDAO;
 import com.akulov.hospital.model.Model;
 import com.akulov.hospital.model.ModelImpl;
 import com.akulov.hospital.properties.DatabaseProperties;
+import com.akulov.hospital.util.DaoFactory;
 import com.akulov.hospital.view.ViewImpl;
 
 public class Main {
@@ -17,11 +18,12 @@ public class Main {
         DatabaseProperties dbProps = new DatabaseProperties(DBPATH);
         DatabaseConfiguration dbConf = new DatabaseConfiguration(dbProps);
         DatabaseAdapterImpl adapter = new DatabaseAdapterImpl(dbConf.getConnection());
-
-        Model model = new ModelImpl();
+        DaoFactory daoFactory = new DaoFactory(adapter);
+        Model model = new ModelImpl(daoFactory);
         DrugDAO drugDAO = new DrugDAO(adapter);
         ControllerImpl controller = new ControllerImpl(model, drugDAO);
-        new ViewImpl(controller);
+        ViewImpl view = new ViewImpl(controller);
+        view.start();
 
     }
 }

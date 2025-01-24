@@ -21,7 +21,17 @@ public class DispensingDAO extends DataAccessObjectImpl<DispensingDTO> {
         return new DispensingDTO(
                 rs.getInt("id"),
                 rs.getInt("patient_id"),
-                rs.getInt("transaction_id")
+                rs.getInt("transaction_id"),
+                rs.getString("status")
         );
+    }
+
+    public void issueDrug(int dispensingId, int adminId) {
+        try{
+            callProcedure("issue_drug", dispensingId, adminId);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
     }
 }

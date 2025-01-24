@@ -22,7 +22,17 @@ public class InventoryDAO extends DataAccessObjectImpl<InventoryDTO> {
                 rs.getInt("id"),
                 rs.getInt("employee_id"),
                 rs.getInt("store_id"),
-                rs.getDate("inventory_date").toLocalDate()
+                rs.getDate("inventory_date").toLocalDate(),
+                rs.getString("sign")
         );
+    }
+
+    public void sign (int inventoryId, int userId){
+        try {
+            callProcedure("sign_inventory", inventoryId, userId);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
     }
 }

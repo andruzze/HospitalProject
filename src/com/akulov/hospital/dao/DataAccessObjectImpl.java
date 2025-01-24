@@ -5,6 +5,8 @@ import com.akulov.hospital.model.dto.DTO;
 import com.akulov.hospital.model.dto.types.FullName;
 import com.akulov.hospital.model.dto.types.Passport;
 import com.akulov.hospital.util.ParserDTO;
+import org.postgresql.util.PSQLException;
+
 import java.sql.*;
 import java.util.*;
 
@@ -20,6 +22,41 @@ public abstract class DataAccessObjectImpl<T extends DTO> implements DataAccessO
     public abstract String getTableName();
 
     public abstract T mapResultSetToEntity(ResultSet rs) throws SQLException;
+
+    protected void callProcedure(String funcName, Object... args) throws PSQLException {
+        StringBuilder sb = new StringBuilder().append("SELECT ").append(funcName).append("(");
+        for (Object arg : args) {
+            sb.append("?,");
+        }
+        sb.setLength(sb.length() - 1);
+        sb.append(");");
+        try {
+            adapter.executeQuery(sb.toString(), args);
+        }catch (PSQLException e){
+            throw e;
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    protected ResultSet callFunc(String funcName, Object... args) {
+        ResultSet rs = null;
+        StringBuilder sb = new StringBuilder().append("SELECT * FROM ").append(funcName).append("( ");
+        for (Object arg : args) {
+            sb.append("?,");
+        }
+        sb.setLength(sb.length() - 1);
+        sb.append(");");
+        try {
+            rs = adapter.executeQuery(sb.toString(), args);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
+
 
     @Override
     public Collection<T> get(String gettingField, Map<String, Object> fieldValueParams) {
@@ -47,7 +84,7 @@ public abstract class DataAccessObjectImpl<T extends DTO> implements DataAccessO
     }
 
     @Override
-    public void insert(T dtoObj) {
+    public void insert(T dtoObj){
         Map<String, Object> fieldMap = dtoObj.getFieldsValeus();
         Set<String> fields = fieldMap.keySet();
         Object[] vals = fieldMap.values().toArray();
@@ -79,7 +116,6 @@ public abstract class DataAccessObjectImpl<T extends DTO> implements DataAccessO
             adapter.executeUpdate(query.toString(), Arrays.copyOfRange(vals, 1, vals.length));
         }catch (SQLException e){
             System.out.println("Ошибка вставки строки в таблицу.\nQUERY - " + query.toString() + "\nVALUES - ");
-
             for(Object val:vals){
                 System.out.print(val + ",");
             }
@@ -135,9 +171,7 @@ public abstract class DataAccessObjectImpl<T extends DTO> implements DataAccessO
         try{
             adapter.executeUpdate(query.toString(), args);
         }catch (SQLException e){
-            System.out.println(query);
             System.out.println(e.getMessage());
-            e.printStackTrace();
         }
     }
 }

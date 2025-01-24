@@ -20,11 +20,16 @@ public class InventoryDTO extends DTOImpl {
     @TableField(collumnName = "inventory_date")
     private final LocalDate inventoryDate;
 
-    public InventoryDTO(Integer id, Integer employeeId, Integer storeId, LocalDate inventoryDate) {
+    @TableField(collumnName = "sign")
+    private final String sign;
+
+    public InventoryDTO(Integer id, Integer employeeId, Integer storeId, LocalDate inventoryDate, String sign) {
         this.id = id;
         this.employeeId = employeeId;
         this.storeId = storeId;
         this.inventoryDate = inventoryDate;
+        this.sign = sign;
+
     }
 
     public Integer getId() {
@@ -42,4 +47,6 @@ public class InventoryDTO extends DTOImpl {
     public LocalDate getInventoryDate() {
         return inventoryDate;
     }
+
+    public Object getSign() {return this.sign;}
 }

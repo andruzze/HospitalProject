@@ -30,7 +30,7 @@ public class StoreDAOTest {
     public void testInsertSingle() {
         storeDAO.delete(1); // Очистка тестовых данных
         // Arrange
-        StoreDTO store = new StoreDTO(1, 10, 20, 100, 50);
+        StoreDTO store = new StoreDTO(1, 10, 20, 100, 50, 101);
 
         // Act
         storeDAO.insert(store);
@@ -51,8 +51,8 @@ public class StoreDAOTest {
         storeDAO.delete(3);
 
         // Arrange
-        StoreDTO store1 = new StoreDTO(2, 15, 25, 200, 150);
-        StoreDTO store2 = new StoreDTO(3, 20, 30, 300, 250);
+        StoreDTO store1 = new StoreDTO(2, 15, 25, 200, 150, 202);
+        StoreDTO store2 = new StoreDTO(3, 20, 30, 300, 250, 303);
 
         // Act
         storeDAO.insert(store1);
@@ -86,7 +86,7 @@ public class StoreDAOTest {
     public void testUpdatePartialFields() {
         // Arrange
         Map<String, Object> conditions = Map.of("id", 1);
-        StoreDTO updatedStore = new StoreDTO(1, null, 35, null, 70); // Обновляем только adminostratorId и currentFill
+        StoreDTO updatedStore = new StoreDTO(1, null, 35, null, 70, 101); // Обновляем только adminostratorId и currentFill
 
         // Act
         storeDAO.update(updatedStore, conditions);
@@ -121,7 +121,7 @@ public class StoreDAOTest {
         storeDAO.delete(4);
 
         // Arrange
-        StoreDTO store = new StoreDTO(4, 10, 40, 100, 150); // current_fill > capacity
+        StoreDTO store = new StoreDTO(4, 10, 40, 100, 150, 404); // current_fill > capacity
 
         // Act
         storeDAO.insert(store);

@@ -7,6 +7,28 @@ import java.util.*;
 
 public class ParserDTO {
 
+    public Collection<Object> getValues(Object obj){
+        Collection<Object> resArr = new ArrayList<>();
+        Class<?> clazz = obj.getClass();
+        Field[] classFields = clazz.getDeclaredFields();
+        for(Field field:classFields){
+            if(field.isAnnotationPresent(TableField.class)){
+                TableField annotation = field.getAnnotation(TableField.class);
+                field.setAccessible(true);
+                try{
+                    resArr.add(field.get(obj));
+                }catch (IllegalArgumentException | IllegalAccessException e){
+                    System.out.println("Ошибка маппинга класса " + clazz.getName() + ": " + e.getMessage());
+                }
+
+            }else{
+                throw new IllegalArgumentException("Аннотация @TableFiled отсутствует в поле " + field.getName());
+            }
+
+        }
+        return resArr;
+    }
+
     public Map<String, Object> parseFieldsMapping (Object obj){
         Map<String, Object> resMapping = new LinkedHashMap<>();
         Class<?> clazz = obj.getClass();

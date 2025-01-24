@@ -16,4 +16,5 @@ public interface DataAccessObject<T> {
     void update(T t, Map<String, Object> conditions);
 
     void delete(Integer... args);
+
 }

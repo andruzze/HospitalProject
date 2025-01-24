@@ -15,14 +15,22 @@ public class DispensingDTO extends DTOImpl {
     @TableField(collumnName = "transaction_id")
     private final Integer transactionId;
 
-    public DispensingDTO(Integer id, Integer patientId, Integer transactionId) {
+    @TableField(collumnName = "status")
+    private final String status;
+
+    public DispensingDTO(Integer id, Integer patientId, Integer transactionId, String status) {
         this.id = id;
         this.patientId = patientId;
         this.transactionId = transactionId;
+        this.status = status;
     }
 
     public Integer getId() {
         return id;
+    }
+
+    public String getStatus(){
+        return status;
     }
 
     public Integer getPatientId() {

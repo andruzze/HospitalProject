@@ -38,7 +38,8 @@ public class PatientDAOTest {
                 new FullName("Ivanov", "Ivan", "Ivanovich"),
                 30,
                 new Passport(1234, 567890),
-                "+123456789"
+                "+123456789",
+                "12378912794"
         );
 
         // Act
@@ -74,7 +75,8 @@ public class PatientDAOTest {
                 new FullName("Petrov", "Ivan", "Ivanovich"),
                 31,
                 new Passport(1234, 567890),
-                "+987654321"
+                "+987654321",
+                "1238127983"
         );
         Map<String, Object> conditions = Map.of("id", 1);
 

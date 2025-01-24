@@ -2,6 +2,7 @@ package com.akulov.hospital.model.dto;
 
 import com.akulov.hospital.util.ParserDTO;
 
+import java.util.Collection;
 import java.util.Map;
 
 
@@ -13,6 +14,11 @@ public class DTOImpl implements DTO {
     public Map<String, Object> getFieldsValeus(){
 
         return parser.parseFieldsMapping(this);
+    }
+
+    @Override
+    public Collection<Object> getValues(){
+        return parser.getValues(this);
     }
 
     @Override
